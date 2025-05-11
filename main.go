@@ -1,7 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
+	"os"
+	"strings"
 
 	"github.com/gocolly/colly"
 )
@@ -38,7 +42,10 @@ func scrapeWikis(urlList []string) (finalList []Article) {
 		c.OnHTML(".mw-parser-output", func(e *colly.HTMLElement) {
 			article.Url = url
 			article.Content = e.Text
-			article.Title = e.Name
+
+			// pulling the title from the URL as a test
+			splitURL := strings.Split(e.Request.URL.String(), "/")
+			article.Title = splitURL[len(splitURL)-1]
 		})
 
 		c.Visit(url)
@@ -47,6 +54,40 @@ func scrapeWikis(urlList []string) (finalList []Article) {
 	}
 
 	return finalList
+}
+
+func createJL(article []Article) (final string) {
+	// open a new file named output.jl
+	f, err := os.OpenFile("output.jl", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Marshal the slice of articles and add each one as a new entry to the jsonl document
+	for _, entry := range article {
+		jsonData, err := json.Marshal(entry)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if _, err := f.Write(jsonData); err != nil {
+			log.Fatal(err)
+		}
+		// write a /n to the document
+		if _, err := f.Write([]byte("\n")); err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	// close the new document that was created
+	if err := f.Close(); err != nil {
+		log.Fatal(err)
+	}
+
+	final = "Your file is ready"
+
+	return final
+
 }
 
 func main() {
@@ -66,6 +107,8 @@ func main() {
 
 	wikiList := scrapeWikis(urls)
 
-	fmt.Println(len(wikiList))
+	finalResult := createJL(wikiList)
+
+	fmt.Println(finalResult)
 
 }
