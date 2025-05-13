@@ -35,7 +35,7 @@ func newURL(urlList []string) (newList []string) {
 	return newList
 }
 
-// function to get a JSON files from wikipedia article API
+// function to get JSON files from wikipedia article API
 func scrapeWiki(urlArticle []string) (finalList []Article) {
 
 	// set up the colly collector
@@ -90,10 +90,6 @@ func formatWiki(result map[string]interface{}) (string, string) {
 		step2 = value.(map[string]interface{})
 	}
 
-	for index, _ := range step2 {
-		fmt.Println(index)
-	}
-
 	articleTitle := step2["title"].(string)
 
 	articleExtract := step2["extract"].(string)
@@ -102,13 +98,7 @@ func formatWiki(result map[string]interface{}) (string, string) {
 
 }
 
-func createArticles(urlList []string) {
-
-	//for _, apiURL := range urlList {
-	//
-	//}
-}
-
+// create a json lines file from a slice of articles
 func createJL(article []Article) (final string) {
 	// open a new file named output.jl
 	f, err := os.OpenFile("output.jl", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -146,26 +136,24 @@ func createJL(article []Article) (final string) {
 func main() {
 
 	// from assignment description
-	//urls := []string{
-	//	"https://en.wikipedia.org/wiki/Robotics",
-	//	"https://en.wikipedia.org/wiki/Robot",
-	//	"https://en.wikipedia.org/wiki/Reinforcement_learning",
-	//	"https://en.wikipedia.org/wiki/Robot_Operating_System",
-	//	"https://en.wikipedia.org/wiki/Intelligent_agent",
-	//	"https://en.wikipedia.org/wiki/Software_agent",
-	//	"https://en.wikipedia.org/wiki/Robotic_process_automation",
-	//	"https://en.wikipedia.org/wiki/Chatbot",
-	//	"https://en.wikipedia.org/wiki/Applications_of_artificial_intelligence",
-	//	"https://en.wikipedia.org/wiki/Android_(robot)"}
+	urls := []string{
+		"https://en.wikipedia.org/wiki/Robotics",
+		"https://en.wikipedia.org/wiki/Robot",
+		"https://en.wikipedia.org/wiki/Reinforcement_learning",
+		"https://en.wikipedia.org/wiki/Robot_Operating_System",
+		"https://en.wikipedia.org/wiki/Intelligent_agent",
+		"https://en.wikipedia.org/wiki/Software_agent",
+		"https://en.wikipedia.org/wiki/Robotic_process_automation",
+		"https://en.wikipedia.org/wiki/Chatbot",
+		"https://en.wikipedia.org/wiki/Applications_of_artificial_intelligence",
+		"https://en.wikipedia.org/wiki/Android_(robot)"}
 
-	//wikiList := scrapeWikis(urls)
+	reFormat := newURL(urls)
 
-	//finalResult := createJL(wikiList)
+	wikiList := scrapeWiki(reFormat)
 
-	//fmt.Println(finalResult)
+	finalResult := createJL(wikiList)
 
-	//for index, value := range testResult2 {
-	//	fmt.Println(index, value)
-	//}
+	fmt.Println(finalResult)
 
 }
