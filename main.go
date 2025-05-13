@@ -15,6 +15,26 @@ type Article struct {
 	Url, Title, Content string
 }
 
+// format the URL to perform better with the wikipedia API
+func newURL(urlList []string) (newList []string) {
+
+	for _, url := range urlList {
+
+		splitURL := strings.Split(url, "/")
+
+		articleName := splitURL[len(splitURL)-1]
+
+		newFront := "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exlimit=max&explaintext&titles="
+
+		finalNew := newFront + articleName
+
+		newList = append(newList, finalNew)
+
+	}
+
+	return newList
+}
+
 // scrapes a list of wikipedia articles and returns a struct of article information
 func scrapeWikis(urlList []string) (finalList []Article) {
 
@@ -54,6 +74,12 @@ func scrapeWikis(urlList []string) (finalList []Article) {
 	}
 
 	return finalList
+}
+
+// get a slice of JSON files from the new list of wikipedia articles
+func scrapeWiki(urlList []string) (listJSON []Article) {
+
+	return listJSON
 }
 
 func createJL(article []Article) (final string) {
@@ -105,10 +131,15 @@ func main() {
 		"https://en.wikipedia.org/wiki/Applications_of_artificial_intelligence",
 		"https://en.wikipedia.org/wiki/Android_(robot)"}
 
-	wikiList := scrapeWikis(urls)
+	//wikiList := scrapeWikis(urls)
 
-	finalResult := createJL(wikiList)
+	//finalResult := createJL(wikiList)
 
-	fmt.Println(finalResult)
+	//fmt.Println(finalResult)
+
+	testUrls := []string{"https://en.wikipedia.org/wiki/Robotics",
+		"https://en.wikipedia.org/wiki/Robot"}
+
+	fmt.Println(newURL(testUrls))
 
 }
