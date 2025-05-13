@@ -35,8 +35,8 @@ func newURL(urlList []string) (newList []string) {
 	return newList
 }
 
-// scrapes a list of wikipedia articles and returns a struct of article information
-func scrapeWikis(urlList []string) (finalList []Article) {
+// function to get a JSON files from wikipedia article API
+func scrapeWiki(urlArticle []string) (finalList []Article) {
 
 	// set up the colly collector
 	c := colly.NewCollector(
@@ -47,39 +47,66 @@ func scrapeWikis(urlList []string) (finalList []Article) {
 		// print URL of request
 		fmt.Println("Visiting", r.URL)
 	})
-	c.OnResponse(func(r *colly.Response) {
-		fmt.Println("Got a response from", r.Request.URL)
-	})
+
 	c.OnError(func(r *colly.Response, err error) {
 		fmt.Println("Error:", err)
 	})
 
-	// iterate through the list of URLs and scrape them
-	for _, url := range urlList {
+	// iterate through and define responses, then visit the api
+	for _, entry := range urlArticle {
 		// create an article to hold the data
 		var article Article
 
-		c.OnHTML(".mw-parser-output", func(e *colly.HTMLElement) {
-			article.Url = url
-			article.Content = e.Text
+		c.OnResponse(func(r *colly.Response) {
+			fmt.Println("Got a response from", r.Request.URL)
 
-			// pulling the title from the URL as a test
-			splitURL := strings.Split(e.Request.URL.String(), "/")
-			article.Title = splitURL[len(splitURL)-1]
+			var msgMapTemplate interface{}
+			json.Unmarshal([]byte(r.Body), &msgMapTemplate)
+			msgMap := msgMapTemplate.(map[string]interface{})
+
+			article.Title, article.Content = formatWiki(msgMap)
+			article.Url = entry
+
 		})
 
-		c.Visit(url)
+		c.Visit(entry)
 
 		finalList = append(finalList, article)
+
 	}
 
 	return finalList
 }
 
-// get a slice of JSON files from the new list of wikipedia articles
-func scrapeWiki(urlList []string) (listJSON []Article) {
+// handling the result of the wikipedia page
+func formatWiki(result map[string]interface{}) (string, string) {
+	//move back to return
 
-	return listJSON
+	var step2 map[string]interface{}
+
+	step1 := result["query"].(map[string]interface{})["pages"].(map[string]interface{})
+
+	for _, value := range step1 {
+		step2 = value.(map[string]interface{})
+	}
+
+	for index, _ := range step2 {
+		fmt.Println(index)
+	}
+
+	articleTitle := step2["title"].(string)
+
+	articleExtract := step2["extract"].(string)
+
+	return articleTitle, articleExtract
+
+}
+
+func createArticles(urlList []string) {
+
+	//for _, apiURL := range urlList {
+	//
+	//}
 }
 
 func createJL(article []Article) (final string) {
@@ -119,17 +146,17 @@ func createJL(article []Article) (final string) {
 func main() {
 
 	// from assignment description
-	urls := []string{
-		"https://en.wikipedia.org/wiki/Robotics",
-		"https://en.wikipedia.org/wiki/Robot",
-		"https://en.wikipedia.org/wiki/Reinforcement_learning",
-		"https://en.wikipedia.org/wiki/Robot_Operating_System",
-		"https://en.wikipedia.org/wiki/Intelligent_agent",
-		"https://en.wikipedia.org/wiki/Software_agent",
-		"https://en.wikipedia.org/wiki/Robotic_process_automation",
-		"https://en.wikipedia.org/wiki/Chatbot",
-		"https://en.wikipedia.org/wiki/Applications_of_artificial_intelligence",
-		"https://en.wikipedia.org/wiki/Android_(robot)"}
+	//urls := []string{
+	//	"https://en.wikipedia.org/wiki/Robotics",
+	//	"https://en.wikipedia.org/wiki/Robot",
+	//	"https://en.wikipedia.org/wiki/Reinforcement_learning",
+	//	"https://en.wikipedia.org/wiki/Robot_Operating_System",
+	//	"https://en.wikipedia.org/wiki/Intelligent_agent",
+	//	"https://en.wikipedia.org/wiki/Software_agent",
+	//	"https://en.wikipedia.org/wiki/Robotic_process_automation",
+	//	"https://en.wikipedia.org/wiki/Chatbot",
+	//	"https://en.wikipedia.org/wiki/Applications_of_artificial_intelligence",
+	//	"https://en.wikipedia.org/wiki/Android_(robot)"}
 
 	//wikiList := scrapeWikis(urls)
 
@@ -137,9 +164,8 @@ func main() {
 
 	//fmt.Println(finalResult)
 
-	testUrls := []string{"https://en.wikipedia.org/wiki/Robotics",
-		"https://en.wikipedia.org/wiki/Robot"}
-
-	fmt.Println(newURL(testUrls))
+	//for index, value := range testResult2 {
+	//	fmt.Println(index, value)
+	//}
 
 }
