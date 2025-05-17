@@ -29,15 +29,16 @@ urls := []string{
 
 ### Programs
 All Go programs used in this test are found in the Go folder in this repository.  <br>
-go.mod: defines the module's properties  <br>
-go.sum: record of the library the project depends on  <br>
-main_test.go: tests and benchmarks the fuctions in the main.go file  <br>
-main.go: function and execution of code to scrape the ten wikipedia sites  <br>
-output.jl: output of the main.go file when it is run  <br>
-README.md: the readme file for the repository  <br>
+**go.mod**: defines the module's properties  <br>
+**go.sum**: record of the library the project depends on  <br>
+**main_test**.go: tests and benchmarks the fuctions in the main.go file  <br>
+**main.go**: function and execution of code to scrape the ten wikipedia sites  <br>
+**output.jl**: output of the main.go file when it is run  <br>
+**README.md**: the readme file for the repository  <br>
+**Assignment_7.exe**: the executable for this project <br>
 
 ## Application
-An executable for this project was created using Windows. To create your own executable, run go build in the same directory as the go program. For more information, see the Gopher documentation on creating an executable [here](https://go.dev/doc/tutorial/compile-install).
+An executable for this project was created using Windows. To create your own executable, run **go build** in the same directory as the go program. For more information, see the Gopher documentation on creating an executable [here](https://go.dev/doc/tutorial/compile-install).
 
 ## Use of AI
 AI was not used for this assignment.

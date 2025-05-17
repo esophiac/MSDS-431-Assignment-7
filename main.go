@@ -58,7 +58,6 @@ func scrapeWiki(urlArticle []string) (finalList []Article) {
 		var article Article
 
 		c.OnResponse(func(r *colly.Response) {
-			fmt.Println("Got a response from", r.Request.URL)
 
 			var msgMapTemplate interface{}
 			json.Unmarshal([]byte(r.Body), &msgMapTemplate)
